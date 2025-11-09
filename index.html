@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta charset="utf-8">
+    <title>Space Horse Adventure</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #0a0e2a, #1a1030);
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            touch-action: none;
+        }
+        header {
+            background-color: rgba(0, 0, 50, 0.9);
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+        header > div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+        .header-left {
+            text-align: left;
+        }
+        .header-left h1 {
+            color: white;
+            font-size: 1.5em;
+            margin: 0;
+        }
+        .header-left p {
+            color: white;
+            font-size: 0.9em;
+            margin: 3px 0;
+        }
+        .header-left a {
+            color: #fff;
+            text-decoration: underline;
+        }
+        #share-buttons {
+            position: fixed;
+            bottom: calc(12px + env(safe-area-inset-bottom, 12px));
+            left: calc(12px + env(safe-area-inset-left, 12px));
+            display: flex;
+            align-items: center;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 6px 10px;
+            border-radius: 20px;
+            max-width: 180px;
+        }
+        #share-buttons p {
+            color: white;
+            margin: 0 5px 0 0;
+            font-size: 0.8em;
+        }
+        #share-buttons a img {
+            width: 24px;
+            height: 24px;
+            filter: invert(1);
+            margin: 0 3px;
+        }
+        .share-icons {
+            display: flex;
+            gap: 5px;
+        }
+        #game-container-wrapper {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            max-width: 100%;
+            max-height: 100%;
+            margin: 0;
+            padding: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            overflow: hidden;
+            background: linear-gradient(to bottom, #0a0e2a, #1a1030);
+        }
+        #game-container {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            touch-action: none;
+            box-sizing: border-box;
+        }
+        #game {
+            text-align: center;
+            padding: 20px;
+            max-width: 90%;
+            margin-top: 80px;
+            background-color: rgba(0, 0, 50, 0.8);
+            border-radius: 10px;
+        }
+        #game h2 {
+            color: #4cc9f0;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        #game p {
+            color: #4cc9f0;
+            font-family: monospace;
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+        .buttons-container {
+            text-align: center;
+            margin: 20px 0;
+            width: 100%;
+        }
+        .veg {
+            padding: 12px 24px;
+            font-size: 1.2em;
+            cursor: pointer;
+            background-color: #4cc9f0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        .veg:hover {
+            background-color: #2a9fd6;
+        }
+        #shoot-btn {
+            position: fixed;
+            bottom: calc(12px + env(safe-area-inset-bottom, 12px));
+            right: calc(12px + env(safe-area-inset-right, 12px));
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            font-size: 24px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            z-index: 100;
+            user-select: none;
+        }
+        #shoot-btn:active {
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0.95);
+        }
+        #traktir-text {
+            position: fixed;
+            bottom: calc(80px + env(safe-area-inset-bottom, 12px));
+            right: calc(12px + env(safe-area-inset-right, 12px));
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            text-align: center;
+            z-index: 100;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 12px;
+            border-radius: 10px;
+            max-width: 180px;
+            line-height: 1.3;
+        }
+        #snack-message {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-size: 16px;
+            z-index: 100;
+            display: none;
+            text-align: center;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+        #quote-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            z-index: 100;
+            display: none;
+            text-align: center;
+            max-width: 80%;
+        }
+        #igloo-building {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 18px;
+            z-index: 100;
+            display: none;
+            text-align: center;
+            max-width: 90%;
+            font-family: monospace;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            touch-action: none;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        #stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+        .star {
+            color: white;
+            font-size: 12px;
+            position: absolute;
+            user-select: none;
+            animation: twinkle 2s infinite;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .cloud, .planet {
+            position: absolute;
+            user-select: none;
+            z-index: 3;
+            pointer-events: none;
+        }
+        @keyframes float {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(100vw); }
+        }
+        @media (max-width: 768px) {
+            header > div {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .header-left {
+                text-align: center;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="stars"></div>
+    <header>
+        <div>
+            <div class="header-left">
+                <h1>Space Horse Adventure</h1>
+                <p>Check out my tunes: <a href="https://open.spotify.com/intl-id/artist/4PjrNKRySnpixMFBWkxJ5d">My Spotify</a></p>
+                <p>Visit my website: <a href="https://okyderana.vercel.app/">Visit my website</a></p>
+                <p style="margin-top: 10px;">
+                    <a
+                        href="https://paypal.me/OkyBastian?amount=3"
+                        target="_blank"
+                        style="background: #0070BA; color: white; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 14px;"
+                    >
+                        Donate $3, support creator!
+                    </a>
+                </p>
+            </div>
+        </div>
+    </header>
+    <section id="game">
+        <h2>Space Horse Adventure</h2>
+        <p>
+            Help the space horse explore the galaxy, collect fruits, and avoid asteroids!<br>
+            Swipe to move, tap the rocket button to shoot.<br>
+            Build a space station to complete each level!
+        </p>
+        <div class="buttons-container">
+            <button class="veg" onclick="startGame()">Start Adventure</button>
+        </div>
+    </section>
+    <div id="game-container-wrapper">
+        <div id="game-container"></div>
+    </div>
+    <div id="shoot-btn" style="display: none;">🚀</div>
+    <div id="share-buttons">
+        <p>Share:</p>
+        <div class="share-icons">
+            <a href="https://wa.me/?text=Check%20out%20this%20fun%20game:%20Space%20Horse%20Adventure!%20%F0%9F%90%B8%20Play%20now:%20https://milkywayokyy.vercel.app" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" />
+            </a>
+            <a href="https://www.instagram.com/direct/t/?text=Check%20out%20this%20fun%20game:%20Space%20Horse%20Adventure!%20%F0%9F%90%B8%20Play%20now:%20https://milkywayokyy.vercel.app" target="_blank">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram" />
+            </a>
+            <a href="javascript:void(0);" onclick="navigator.share({title: 'Space Horse Adventure', text: 'Check out this fun game!', url: 'https://milkywayokyy.vercel.app'})">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/48/Share_icon.svg" alt="Share" />
+            </a>
+        </div>
+    </div>
+    <div id="traktir-text">
+        Traktir saya dong<br>
+        <span style="font-size: 14px; font-family: Arial, sans-serif;">support creator BCA: 5065189817</span>
+    </div>
+    <div id="snack-message">Great! Keep collecting fruits!</div>
+    <div id="quote-message"></div>
+    <div id="igloo-building">
+        <pre></pre>
+        <p>Building the space station... Stay safe!</p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
+    <script>
+        // Stars effect
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            starsContainer.innerHTML = '';
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.textContent = '✨';
+                star.style.left = Math.random() * 100 + 'vw';
+                star.style.top = Math.random() * 100 + 'vh';
+                star.style.animationDuration = (5 + Math.random() * 10) + 's';
+                star.style.opacity = Math.random() * 0.3 + 0.2;
+                star.style.fontSize = (8 + Math.random() * 10) + 'px';
+                starsContainer.appendChild(star);
+                const animateStar = () => {
+                    const currentTop = parseFloat(star.style.top);
+                    star.style.top = (currentTop + 0.2) + 'vh';
+                    if (currentTop > 100) {
+                        star.style.left = Math.random() * 100 + 'vw';
+                        star.style.top = -10 + 'vh';
+                    }
+                    requestAnimationFrame(animateStar);
+                };
+                requestAnimationFrame(animateStar);
+            }
+        }
+        // Clouds and planets animation
+        function createCloudsAndPlanets() {
+            const gameContainer = document.getElementById('game-container-wrapper');
+            const clouds = ['☁️', '☁️', '☁️', '☁️', '☁️'];
+            const planets = ['🪐', '🪐', '🪐', '🪐', '🪐'];
+            clouds.forEach((cloud, i) => {
+                const cloudElement = document.createElement('div');
+                cloudElement.className = 'cloud';
+                cloudElement.textContent = cloud;
+                cloudElement.style.left = -50 + 'px';
+                cloudElement.style.top = 50 + i * 30 + 'px';
+                cloudElement.style.fontSize = '40px';
+                cloudElement.style.animation = `float ${20 + i * 5}s linear infinite`;
+                gameContainer.appendChild(cloudElement);
+            });
+            planets.forEach((planet, i) => {
+                const planetElement = document.createElement('div');
+                planetElement.className = 'planet';
+                planetElement.textContent = planet;
+                planetElement.style.left = -50 + 'px';
+                planetElement.style.top = 100 + i * 40 + 'px';
+                planetElement.style.fontSize = '36px';
+                planetElement.style.animation = `float ${25 + i * 5}s linear infinite`;
+                gameContainer.appendChild(planetElement);
+            });
+        }
+        // Space station designs for each level
+        const spaceStationDesigns = [
+            // Level 1
+            `
+      /\\
+     /  \\
+    /____\\
+   |⭐  🚀  ⭐|
+   |🌍  🚪  🌍|
+   |______⭐|
+            `,
+            // Level 2
+            `
+      /\\
+     /  \\
+    /____\\
+   /      \\
+  /________\\
+ |⭐  🚀  ⭐|
+ |📡  🚪  📡|
+ |______⭐|
+ |  ⭐  ⭐  ⭐  |
+            `,
+            // Level 3
+            `
+        /\\
+       /  \\
+      /____\\
+     /      \\
+    /________\\
+   /          \\
+  /____________\\
+ |⭐  🚀  ⭐|
+ |📡  🚪  📡|
+ |______⭐|
+ |  ⭐  ⭐  ⭐  |
+ |  🌌  🌌  🌌  |
+ |📡  📡  📡|
+            `,
+            // Level 4
+            `
+          /\\
+         /  \\
+        /____\\
+       /      \\
+      /________\\
+     /          \\
+    /____________\\
+   /              \\
+  /________________\\
+ |⭐  🚀  ⭐|
+ |📡  🚪  📡|
+ |______⭐|
+ |  ⭐  ⭐  ⭐  |
+ |  🌌  🌌  🌌  |
+ |📡  📡  📡|
+ |📡  📡  📡|
+            `,
+            // Level 5
+            `
+            /\\
+           /  \\
+          /____\\
+         /      \\
+        /________\\
+       /          \\
+      /____________\\
+     /              \\
+    /________________\\
+   /                  \\
+  /____________________\\
+ |⭐  🚀  ⭐|
+ |📡  🚪  📡|
+ |______⭐|
+ |  ⭐  ⭐  ⭐  |
+ |  🌌  🌌  🌌  |
+ |📡  📡  📡|
+ |📡  📡  📡|
+ |📡  📡  📡|
+            `,
+            // Level 6
+            `
+              /\\
+             /  \\
+            /____\\
+           /      \\
+          /________\\
+         /          \\
+        /____________\\
+       /              \\
+      /________________\\
+     /                  \\
+    /____________________\\
+   /                      \\
+  /________________________\\
+ |⭐  🚀  ⭐|
+ |📡  🚪  📡|
+ |______⭐|
+ |  ⭐  ⭐  ⭐  |
+ |  🌌  🌌  🌌  |
+ |📡  📡  📡|
+ |📡  📡  📡|
+ |📡  📡  📡|
+ |📡  📡  📡|
+            `,
+            // Level 7
+            `
+                /\\
+               /  \\
+              /____\\
+             /      \\
+            /________\\
+           /          \\
+          /____________\\
+         /              \\
+        /________________\\
+       /                  \\
+      /____________________\\
+     /                      \\
+    /________________________\\
+   /                          \\
+  /____________________________\\
+ |⭐  🚀  ⭐|
+ |📡  🚪  📡|
+ |______⭐|
+ |  ⭐  ⭐  ⭐  |
+ |  🌌  🌌  🌌  |
+ |📡  📡  📡|
+ |📡  📡  📡|
+ |📡  📡  📡|
+ |📡  📡  📡|
+ |📡  📡  📡|
+            `,
+            // Level 8
+            `
+                  /\\
+                 /  \\
+                /____\\
+               /      \\
+              /________\\
+             /          \\
+            /____________\\
+           /              \\
+          /________________\\
+         /                  \\
+        /____________________\\
+       /                      \\
+      /________________________\\
+     /                          \\
+    /____________________________\\
+   /                              \\
+  /________________________________\\
+ |⭐  🚀  ⭐|
+ |📡  🚪  📡|
+ |______⭐|
+ |  ⭐  ⭐  ⭐  |
+ |  🌌  🌌  🌌  |
+ |📡  📡  📡|
+ |📡  📡  📡|
+ |📡  📡  📡|
+ |📡  📡  📡|
+ |📡  📡  📡|
+ |📡  📡  📡|
+            `
+        ];
+        // Game variables
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
+        let gameScene = null;
+        // Start game
+        function startGame() {
+            document.getElementById('game').style.display = 'none';
+            document.getElementById('game-container-wrapper').style.display = 'block';
+            document.getElementById('shoot-btn').style.display = 'block';
+            createStars();
+            createCloudsAndPlanets();
+        }
+        // Show space station building
+        function showSpaceStationBuilding(level) {
+            const spaceStationBuilding = document.getElementById('igloo-building');
+            spaceStationBuilding.innerHTML = `
+                <pre>${spaceStationDesigns[level - 1]}</pre>
+                <p>Building the space station... Stay safe!</p>
+            `;
+            spaceStationBuilding.style.display = 'block';
+            setTimeout(() => {
+                spaceStationBuilding.style.display = 'none';
+            }, 3000);
+        }
+        // Touch controls
+        document.getElementById('game-container').addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, false);
+        document.getElementById('game-container').addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }, false);
+        document.getElementById('shoot-btn').addEventListener('touchend', () => {
+            if (gameScene) gameScene.shootRocket();
+        }, false);
+        function handleSwipe() {
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+            if (Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 0) gameScene.handleMove('left');
+                else gameScene.handleMove('right');
+            } else {
+                if (diffY > 0) gameScene.handleMove('up');
+                else gameScene.handleMove('down');
+            }
+        }
+        function showSnackMessage() {
+            const snackMessage = document.getElementById('snack-message');
+            snackMessage.style.display = 'block';
+            setTimeout(() => {
+                snackMessage.style.display = 'none';
+            }, 2000);
+        }
+        function showQuoteMessage(quote, author) {
+            const quoteMessage = document.getElementById('quote-message');
+            quoteMessage.innerHTML += `<strong>"${quote}"</strong><br><em>— ${author}</em><br>`;
+            quoteMessage.style.display = 'block';
+            setTimeout(() => {
+                quoteMessage.style.display = 'none';
+                quoteMessage.innerHTML = '';
+            }, 8000);
+        }
+        // Game constants
+        const GAME_WIDTH = window.innerWidth;
+        const GAME_HEIGHT = window.innerHeight;
+        const TILE = Math.min(GAME_WIDTH, GAME_HEIGHT) / 24;
+        const COLS = 28;
+        const ROWS = 20;
+        // Phaser game scenes
+        class BootScene extends Phaser.Scene {
+            constructor() { super('BootScene'); }
+            preload() { }
+            create() { this.scene.start('MenuScene'); }
+        }
+        class MenuScene extends Phaser.Scene {
+            constructor() { super('MenuScene'); }
+            create() {
+                const centerX = this.cameras.main.centerX;
+                const centerY = this.cameras.main.centerY;
+                this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x0a0e2a, 0.7).setOrigin(0);
+                this.add.text(centerX, centerY - 120, 'SPACE HORSE ADVENTURE', {
+                    fontFamily: 'Georgia, serif',
+                    fontSize: '44px',
+                    color: '#4cc9f0',
+                    stroke: '#001424',
+                    strokeThickness: 6
+                }).setOrigin(0.5);
+                this.add.text(centerX, centerY - 70, 'Explore space, collect fruits, and avoid asteroids!', {
+                    fontSize: '18px',
+                    color: '#4cc9f0'
+                }).setOrigin(0.5);
+                this.add.text(centerX, centerY - 10, '🐴', { fontSize: '78px' }).setOrigin(0.5);
+                const startBtn = this.add.rectangle(centerX, centerY + 80, 220, 56, 0x4cc9f0, 1).setStrokeStyle(3, 0x001424).setInteractive();
+                this.add.text(centerX, centerY + 80, 'START ADVENTURE', {
+                    fontSize: '20px',
+                    fontWeight: '700',
+                    color: '#fff'
+                }).setOrigin(0.5);
+                startBtn.on('pointerdown', () => {
+                    document.getElementById('game').style.display = 'none';
+                    this.scene.start('GameScene', { startLevel: 1 });
+                });
+                this.add.text(centerX, centerY + 150, 'Swipe to move • Tap rocket to shoot', {
+                    fontSize: '13px',
+                    color: '#4cc9f0'
+                }).setOrigin(0.5);
+            }
+        }
+        class GameScene extends Phaser.Scene {
+            constructor() { super('GameScene'); }
+            init(data) { this.startLevel = data.startLevel || 1; }
+            create() {
+                gameScene = this;
+                this.level = this.startLevel;
+                this.maxLevel = 8;
+                this.lives = 3;
+                this.score = 0;
+                this.collectCount = 0;
+                this.asteroidsToShoot = 0;
+                this.asteroidsShot = 0;
+                this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x0a0e2a).setOrigin(0);
+                // Add pink clouds (planets remain white)
+                this.clouds = this.add.group();
+                for (let i = 0; i < 10; i++) {
+                    const cloud = this.add.text(
+                        Phaser.Math.Between(0, this.scale.width),
+                        Phaser.Math.Between(100, 200),
+                        '☁️', { fontSize: '40px', color: '#FFC0CB' }
+                    ).setOrigin(0.5);
+                    this.clouds.add(cloud);
+                    this.tweens.add({
+                        targets: cloud,
+                        x: Phaser.Math.Between(0, this.scale.width),
+                        duration: Phaser.Math.Between(20000, 40000),
+                        repeat: -1,
+                        yoyo: true
+                    });
+                }
+                // Add planets (white)
+                this.planets = this.add.group();
+                const planetData = [
+                    { emoji: '🪐', x: this.scale.width * 0.1 },
+                    { emoji: '🪐', x: this.scale.width * 0.3 },
+                    { emoji: '🪐', x: this.scale.width * 0.5 },
+                    { emoji: '🪐', x: this.scale.width * 0.7 },
+                    { emoji: '🪐', x: this.scale.width * 0.9 }
+                ];
+                planetData.forEach(data => {
+                    const planet = this.add.text(
+                        data.x,
+                        Phaser.Math.Between(100, 200),
+                        data.emoji, { fontSize: '36px', color: '#ffffff' }
+                    ).setOrigin(0.5);
+                    this.planets.add(planet);
+                    this.tweens.add({
+                        targets: planet,
+                        x: Phaser.Math.Between(this.scale.width * 0.05, this.scale.width * 0.95),
+                        duration: Phaser.Math.Between(20000, 40000),
+                        repeat: -1,
+                        yoyo: true,
+                        ease: 'Sine.easeInOut'
+                    });
+                });
+                // Play area setup
+                const playWidth = COLS * TILE;
+                const playHeight = ROWS * TILE;
+                this.playX = Math.round((this.scale.width - playWidth) / 2);
+                this.playY = Math.round((this.scale.height - playHeight) / 2) + 30;
+                this.playArea = this.add.container(this.playX, this.playY);
+                const g = this.add.graphics();
+                g.fillStyle(0x001424, 1);
+                g.fillRoundedRect(0, 0, playWidth, playHeight, 12);
+                this.playArea.add(g);
+                this.createMaze(this.level);
+                this.wallGraphics = this.add.graphics();
+                this.playArea.add(this.wallGraphics);
+                this.drawMazeWalls();
+                this.settled = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+                this.foods = this.add.group();
+                this.createPlayer();
+                this.asteroids = this.add.group();
+                if (this.level >= 3) {
+                    this.asteroidsToShoot = this.level === 3 ? 1 : this.level === 4 ? 2 : this.level === 5 ? 3 : this.level === 6 ? 4 : 5;
+                    this.createAsteroids(this.asteroidsToShoot);
+                }
+                this.rocketGroup = this.add.group();
+                this.createUI();
+                this.pauseOverlay = this.createPauseOverlay();
+                this.pauseOverlay.setVisible(false);
+                this.cursors = this.input.keyboard.createCursorKeys();
+                this.keyW = this.input.keyboard.addKey('W');
+                this.keyA = this.input.keyboard.addKey('A');
+                this.keyS = this.input.keyboard.addKey('S');
+                this.keyD = this.input.keyboard.addKey('D');
+                this.keyP = this.input.keyboard.addKey('P');
+                this.keySpace = this.input.keyboard.addKey('SPACE');
+                this.needed = 4 + this.level * 2;
+                this.updateNeeded();
+                this.placeFoods(this.needed);
+                this.time.addEvent({ delay: 900, loop: true, callback: () => this.periodicSpawn() });
+                this.invuln = false;
+                this.isPaused = false;
+                this.physics.add.overlap(this.rocketGroup, this.asteroids, this.hitAsteroid, null, this);
+                this._moveCooldown = 0;
+                this.moveInterval = 80;
+            }
+            createPlayer() {
+                const start = this.findOpenCell(2, 2);
+                this.player = {
+                    gx: start.x,
+                    gy: start.y,
+                    sprite: this.add.text(0, 0, '🐴', { fontSize: '26px' }).setOrigin(0.5)
+                };
+                this.playArea.add(this.player.sprite);
+                this.updatePlayerSpritePosition();
+                this.physics.world.enable(this.player.sprite);
+                this.player.sprite.body.setCollideWorldBounds(true);
+            }
+            createAsteroids(numAsteroids) {
+                for (let i = 0; i < numAsteroids; i++) {
+                    const start = this.findOpenCell(COLS - 3, ROWS - 3);
+                    const asteroidSprite = this.add.text(0, 0, '💫', { fontSize: '26px' }).setOrigin(0.5);
+                    this.playArea.add(asteroidSprite);
+                    this.physics.world.enable(asteroidSprite);
+                    const asteroid = {
+                        gx: start.x,
+                        gy: start.y,
+                        sprite: asteroidSprite,
+                        moveTimer: 0,
+                        moveInterval: 400 - (this.level - 2) * 60
+                    };
+                    this.updateAsteroidSpritePosition(asteroid);
+                    this.asteroids.add(asteroid.sprite);
+                    asteroid.sprite.asteroidData = asteroid;
+                }
+            }
+            updateAsteroidSpritePosition(asteroid) {
+                asteroid.sprite.x = asteroid.gx * TILE + TILE / 2;
+                asteroid.sprite.y = asteroid.gy * TILE + TILE / 2;
+            }
+            moveAsteroid(asteroid) {
+                const dx = this.player.gx - asteroid.gx;
+                const dy = this.player.gy - asteroid.gy;
+                let newAsteroidX = asteroid.gx;
+                let newAsteroidY = asteroid.gy;
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    if (dx > 0) newAsteroidX++;
+                    else newAsteroidX--;
+                } else {
+                    if (dy > 0) newAsteroidY++;
+                    else newAsteroidY--;
+                }
+                if (newAsteroidX >= 0 && newAsteroidX < COLS && newAsteroidY >= 0 && newAsteroidY < ROWS && this.maze[newAsteroidY][newAsteroidX] === 0 && !this.settled[newAsteroidY][newAsteroidX]) {
+                    asteroid.gx = newAsteroidX;
+                    asteroid.gy = newAsteroidY;
+                    this.updateAsteroidSpritePosition(asteroid);
+                }
+            }
+            shootRocket() {
+                const projectile = this.add.text(this.player.sprite.x, this.player.sprite.y, '🚀', { fontSize: '20px' }).setOrigin(0.5);
+                this.playArea.add(projectile);
+                this.rocketGroup.add(projectile);
+                this.physics.world.enable(projectile);
+                projectile.body.setVelocityY(-200);
+            }
+            hitAsteroid(projectile, asteroid) {
+                projectile.destroy();
+                asteroid.destroy();
+                this.score += 50;
+                this.asteroidsShot++;
+                this.updateScore();
+                if (this.asteroidsShot === this.asteroidsToShoot) this.onLevelComplete();
+            }
+            createUI() {
+                this.uiScore = this.add.text(12, 12, `Score: ${this.score}`, { fontSize: '16px', color: '#fff' }).setScrollFactor(0).setDepth(20).setOrigin(0, 0);
+                this.uiLevel = this.add.text(12, 36, `Level: ${this.level}`, { fontSize: '14px', color: '#cfe0ff' }).setScrollFactor(0).setDepth(20).setOrigin(0, 0);
+                this.uiLives = this.add.text(12, 56, `Lives: ${this.lives}`, { fontSize: '14px', color: '#ffd1d1' }).setScrollFactor(0).setDepth(20).setOrigin(0, 0);
+                this.uiNeeded = this.add.text(this.scale.width - 12, 12, `Need: 0`, { fontSize: '16px', color: '#fff' }).setOrigin(1, 0);
+                if (this.level >= 3) this.uiAsteroids = this.add.text(this.scale.width - 12, 36, `Asteroids: ${this.asteroidsToShoot - this.asteroidsShot}`, { fontSize: '14px', color: '#cfe0ff' }).setOrigin(1, 0);
+                this.uiMsg = this.add.text(this.scale.width / 2, this.scale.height - 58, '', { fontSize: '16px', color: '#fff' }).setOrigin(0.5);
+            }
+            createPauseOverlay() {
+                const overlay = this.add.container(this.scale.width / 2, this.scale.height / 2).setDepth(100);
+                const bg = this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x000000, 0.8).setOrigin(0.5);
+                const text = this.add.text(0, 0, 'PAUSED', { fontSize: '40px', color: '#fff', fontWeight: 'bold' }).setOrigin(0.5);
+                overlay.add([bg, text]);
+                return overlay;
+            }
+            createMaze(difficulty) {
+                this.maze = Array.from({ length: ROWS }, () => Array(COLS).fill(1));
+                const carve = (x, y) => {
+                    this.maze[y][x] = 0;
+                    const dirs = Phaser.Utils.Array.Shuffle([[2, 0], [-2, 0], [0, 2], [0, -2]]);
+                    for (const [dx, dy] of dirs) {
+                        const nx = x + dx, ny = y + dy;
+                        if (nx > 0 && nx < COLS - 1 && ny > 0 && ny < ROWS - 1 && this.maze[ny][nx] === 1) {
+                            this.maze[y + dy / 2][x + dx / 2] = 0;
+                            carve(nx, ny);
+                        }
+                    }
+                };
+                carve(1, 1);
+                for (let x = 0; x < COLS; x++) this.maze[0][x] = this.maze[ROWS - 1][x] = 1;
+                for (let y = 0; y < ROWS; y++) this.maze[y][0] = this.maze[y][COLS - 1] = 1;
+            }
+            drawMazeWalls() {
+                this.wallGraphics.clear();
+                this.wallGraphics.fillStyle(0x3a2c5a, 1);
+                this.wallGraphics.lineStyle(1, 0x1e0a3f, 1);
+                for (let y = 0; y < ROWS; y++) {
+                    for (let x = 0; x < COLS; x++) {
+                        if (this.maze[y][x] === 1) {
+                            const px = x * TILE + 2, py = y * TILE + 2, s = TILE - 4;
+                            this.wallGraphics.fillRoundedRect(px, py, s, s, 6);
+                            this.wallGraphics.strokeRoundedRect(px, py, s, s, 6);
+                        }
+                    }
+                }
+            }
+            placeFoods(n) {
+                const types = ['🍎', '🍌', '🍓', '🥭', '🍊', '🍇'];
+                let attempts = 0;
+                while (this.foods.getLength() < n && attempts++ < 2000) {
+                    const x = 1 + Math.floor(Math.random() * (COLS - 2));
+                    const y = 1 + Math.floor(Math.random() * (ROWS - 2));
+                    if (this.maze[y][x] === 0 && !this.foodAt(x, y) && !(this.player && this.player.gx === x && this.player.gy === y)) {
+                        const t = types[Math.floor(Math.random() * types.length)];
+                        const f = this.add.text(x * TILE + TILE / 2, y * TILE + TILE / 2, t, { fontSize: '20px' }).setOrigin(0.5);
+                        f.gx = x; f.gy = y; f.type = t;
+                        this.playArea.add(f);
+                        this.foods.add(f);
+                    }
+                }
+            }
+            foodAt(x, y) {
+                return this.foods.getChildren().some(f => f.gx === x && f.gy === y);
+            }
+            findOpenCell(cx = 2, cy = 2) {
+                for (let r = 0; r < Math.max(COLS, ROWS); r++) {
+                    for (let dy = -r; dy <= r; dy++) {
+                        for (let dx = -r; dx <= r; dx++) {
+                            const x = cx + dx, y = cy + dy;
+                            if (x >= 0 && x < COLS && y >= 0 && y < ROWS && this.maze[y][x] === 0 && !this.settled[y][x]) return { x, y };
+                        }
+                    }
+                }
+                return { x: cx, y: cy };
+            }
+            periodicSpawn() {
+                if (this.isPaused) return;
+                if (Math.random() < 0.35) this.placeFoods(this.needed);
+            }
+            updateScore() { this.uiScore.setText(`Score: ${this.score}`); }
+            updateNeeded() { this.uiNeeded.setText(`Need: ${this.needed - this.collectCount}`); }
+            updatePlayerSpritePosition() {
+                this.player.sprite.x = this.player.gx * TILE + TILE / 2;
+                this.player.sprite.y = this.player.gy * TILE + TILE / 2;
+            }
+            eatFoodAt(x, y) {
+                for (let i = this.foods.getLength() - 1; i >= 0; i--) {
+                    const f = this.foods.getChildren()[i];
+                    if (f.gx === x && f.gy === y) {
+                        f.destroy();
+                        this.collectCount++;
+                        this.score += 10;
+                        this.updateScore();
+                        this.uiMsg.setText('Great! Keep collecting fruits!');
+                        showSnackMessage();
+                        this.updateNeeded();
+                        if (this.collectCount >= this.needed) this.onLevelComplete();
+                        return true;
+                    }
+                }
+                return false;
+            }
+            onLevelComplete() {
+                this.uiMsg.setText('Building the space station... Stay safe!');
+                showSpaceStationBuilding(this.level);
+                this.time.delayedCall(1200, () => {
+                    this.score += 50 * this.level;
+                    this.updateScore();
+                    const quotes = {
+                        1: { author: "Nikola Tesla", text: "Money does not represent such a value as men have placed upon it. All my money has been invested into experiments with which I have made new discoveries enabling mankind to have a little easier life." },
+                        2: { author: "Karen Nyberg", text: "From space, you see the fragility of our planet. It's a reminder that we all share this common home and that we need to take care of it." },
+                        3: [
+                            { author: "Edgar Mitchell", text: "From out there on the moon, international politics look so petty." },
+                            { author: "M. Hatta", text: "With books, I'm free." },
+                        ],
+                        4: [
+                            { author: "Christa McAuliffe", text: "Space is for everybody. It's not just for a few people in science or math, or for a select group of astronauts." },
+                            { author: "Wright Brothers", text: "If birds can glide for long periods of time, then… why can’t I?" },
+                        ],
+                        5: [
+                            { author: "Anne McClain", text: "With so much conflict in the world, space exploration can be a beacon of hope." },
+                            { author: "Oky Bastian", text: "Trakter saya makan siang ya Pak Bu, support struggling musician." },
+                        ],
+                        6: [
+                            { author: "Star Trek", text: "Space, the final frontier." },
+                            { author: "Lise Meitner", text: "Science makes people reach selflessly for truth and objectivity; it teaches people to accept reality, with wonder and admiration." },
+                            { author: "Oky Bastian", text: "Traktir saya es kacang Ijo dong" },
+                        ],
+                        7: [
+                            { author: "Vincent van Gogh", text: "The sight of the stars always makes me dream." },
+                            { author: "Alfred Nobel", text: "If I have a thousand ideas and only one turns out to be good, I am satisfied." },
+                            { author: "Oky B", text: "Would you mind buying me an Iced Tea and Pecel Rice? Thanks" },
+                        ],
+                        8: [
+                            { author: "Suzy Kassem", text: "Everybody has a little bit of the sun and moon in them." },
+                            { author: "Captain James T. Kirk", text: "We prefer to help ourselves. We make mistakes, but we’re human–and maybe that’s the word that best explains us." },
+                            { author: "Oky Bastian", text: "Would you mind buying me an Iced Tea and Pecel Rice? Thanks" },
+                        ]
+                    };
+                    const quoteData = quotes[this.level];
+                    if (quoteData) {
+                        if (Array.isArray(quoteData)) {
+                            quoteData.forEach(q => showQuoteMessage(q.text, q.author));
+                        } else {
+                            showQuoteMessage(quoteData.text, quoteData.author);
+                        }
+                    }
+                    if (this.level === 8) this.scene.start('WinScene', { score: this.score });
+                    else this.scene.start('TransitionScene', { nextLevel: this.level + 1, score: this.score });
+                });
+            }
+            loseLife() {
+                if (this.invuln) return;
+                this.lives -= 1;
+                this.uiLives.setText(`Lives: ${this.lives}`);
+                this.uiMsg.setText('Ouch! An asteroid got you!');
+                this.invuln = true;
+                this.player.sprite.setAlpha(0.4);
+                this.time.delayedCall(1200, () => {
+                    this.invuln = false;
+                    this.player.sprite.setAlpha(1);
+                });
+                const sp = this.findOpenCell(2, 2);
+                this.player.gx = sp.x;
+                this.player.gy = sp.y;
+                this.updatePlayerSpritePosition();
+                if (this.lives <= 0) this.time.delayedCall(400, () => this.scene.start('LoseScene', { score: this.score }));
+            }
+            update(time, delta) {
+                if (Phaser.Input.Keyboard.JustDown(this.keyP)) {
+                    this.isPaused = !this.isPaused;
+                    this.pauseOverlay.setVisible(this.isPaused);
+                    if (this.isPaused) this.scene.pause();
+                    else this.scene.resume();
+                    return;
+                }
+                if (this.isPaused) return;
+                if (Phaser.Input.Keyboard.JustDown(this.keySpace)) this.shootRocket();
+                this._moveCooldown += delta;
+                if (this._moveCooldown >= this.moveInterval) {
+                    let dir = null;
+                    if (this.cursors.left.isDown || this.keyA.isDown) dir = 'left';
+                    else if (this.cursors.right.isDown || this.keyD.isDown) dir = 'right';
+                    else if (this.cursors.up.isDown || this.keyW.isDown) dir = 'up';
+                    else if (this.cursors.down.isDown || this.keyS.isDown) dir = 'down';
+                    if (dir) {
+                        this.handleMove(dir);
+                        this._moveCooldown = 0;
+                    }
+                }
+                this.asteroids.getChildren().forEach(asteroidSprite => {
+                    const asteroid = asteroidSprite.asteroidData;
+                    asteroid.moveTimer += delta;
+                    if (asteroid.moveTimer >= asteroid.moveInterval) {
+                        asteroid.moveTimer = 0;
+                        this.moveAsteroid(asteroid);
+                    }
+                });
+                let inHazard = false;
+                if (this.player.gy >= 0 && this.player.gy < ROWS && this.player.gx >= 0 && this.player.gx < COLS && this.settled[this.player.gy][this.player.gx]) inHazard = true;
+                this.asteroids.getChildren().forEach(asteroid => {
+                    const asteroidData = asteroid.asteroidData;
+                    if (asteroidData.gx === this.player.gx && asteroidData.gy === this.player.gy) inHazard = true;
+                });
+                if (inHazard) this.loseLife();
+            }
+            handleMove(dir) {
+                let nx = this.player.gx, ny = this.player.gy;
+                if (dir === 'left') nx--;
+                if (dir === 'right') nx++;
+                if (dir === 'up') ny--;
+                if (dir === 'down') ny++;
+                if (nx >= 0 && nx < COLS && ny >= 0 && ny < ROWS && this.maze[ny][nx] === 0 && !this.settled[ny][nx]) {
+                    this.player.gx = nx;
+                    this.player.gy = ny;
+                    this.updatePlayerSpritePosition();
+                    this.eatFoodAt(nx, ny);
+                }
+            }
+        }
+        class TransitionScene extends Phaser.Scene {
+            constructor() { super('TransitionScene'); }
+            init(data) { this.nextLevel = data.nextLevel; this.score = data.score; }
+            create() {
+                this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x0a0e2a).setOrigin(0);
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 100, `Level ${this.nextLevel - 1} complete!`, {
+                    fontSize: '26px', color: '#fff', fontStyle: 'bold'
+                }).setOrigin(0.5);
+                this.time.delayedCall(4000, () => {
+                    if (this.nextLevel > 8) this.scene.start('WinScene', { score: this.score });
+                    else this.scene.start('GameScene', { startLevel: this.nextLevel });
+                });
+            }
+        }
+        class WinScene extends Phaser.Scene {
+            constructor() { super('WinScene'); }
+            init(data) { this.finalScore = data.score || 0; }
+            create() {
+                this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x0a0e2a).setOrigin(0);
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 150, 'YOU BUILT THE SPACE STATION!', {
+                    fontSize: '30px', color: '#4cc9f0'
+                }).setOrigin(0.5);
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 90, 'Thank you for exploring space!', {
+                    fontSize: '24px', color: '#4cc9f0'
+                }).setOrigin(0.5);
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 50, 'May you always find wonder and adventure in the cosmos.', {
+                    fontSize: '16px', color: '#4cc9f0'
+                }).setOrigin(0.5);
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 20, `
+                       _
+                     /\\
+                    /  \\
+                   /____\\
+                  |⭐  🚀  ⭐|
+                  |🌍  🚪  🌍|
+                  |______⭐|
+                    `, {
+                        fontSize: '60px', color: '#fff', fontFamily: 'monospace'
+                    }).setOrigin(0.5);
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 120, `Final score: ${this.finalScore}`, {
+                    fontSize: '18px', color: '#cfe0ff'
+                }).setOrigin(0.5);
+                const btn = this.add.rectangle(this.cameras.main.centerX, this.cameras.main.centerY + 160, 220, 56, 0x4cc9f0).setInteractive();
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 160, 'Play Again', {
+                    color: '#fff', fontSize: '18px'
+                }).setOrigin(0.5);
+                btn.on('pointerdown', () => this.scene.start('GameScene', { startLevel: 1 }));
+            }
+        }
+        class LoseScene extends Phaser.Scene {
+            constructor() { super('LoseScene'); }
+            init(data) { this.finalScore = data.score || 0; }
+            create() {
+                this.add.rectangle(0, 0, this.scale.width, this.scale.height, 0x0a0e2a).setOrigin(0);
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY - 40, 'MISSION FAILED', {
+                    fontSize: '36px', color: '#ff6b6b'
+                }).setOrigin(0.5);
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 6, `Final score: ${this.finalScore}`, {
+                    fontSize: '18px', color: '#cfe0ff'
+                }).setOrigin(0.5);
+                const btn = this.add.rectangle(this.cameras.main.centerX, this.cameras.main.centerY + 72, 220, 56, 0xff6b6b).setInteractive();
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY + 72, 'Try Again', {
+                    color: '#fff', fontSize: '18px'
+                }).setOrigin(0.5);
+                btn.on('pointerdown', () => this.scene.start('GameScene', { startLevel: 1 }));
+            }
+        }
+        const config = {
+            type: Phaser.AUTO,
+            parent: 'game-container',
+            width: window.innerWidth,
+            height: window.innerHeight,
+            backgroundColor: '#0a0e2a',
+            scene: [BootScene, MenuScene, GameScene, TransitionScene, WinScene, LoseScene],
+            physics: { default: 'arcade', arcade: { gravity: { y: 0 }, debug: false } },
+            scale: {
+                mode: Phaser.Scale.FIT,
+                autoCenter: Phaser.Scale.CENTER_BOTH,
+                width: window.innerWidth,
+                height: window.innerHeight,
+            }
+        };
+        const game = new Phaser.Game(config);
+        window.addEventListener('resize', () => {
+            game.scale.resize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
